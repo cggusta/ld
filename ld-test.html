@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+    <title>LaunchDarkly Interview Test</title>
+    <!-- Use LaunchDarkly sdk -->
+    <script src="https://unpkg.com/launchdarkly-js-client-sdk@2"></script>
+    <style>
+        #ld_test {
+            text-align: center;
+        }
+        
+        #ld_test .test-copy {
+            font-size: 2em;
+            font-style: italic;
+            font-family: sans-serif;
+            background: white;
+            border: 3px solid black;
+            border-radius: 1.5em;
+            width: fit-content;
+            margin: 2em auto 1em;
+            padding: .5em 1em;
+            visibility: hidden;
+        }
+        
+        #ld_test .test-img img {
+            border-radius: 1.5em 1.5em 0 0;
+            border-bottom: 15px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // Set up the user properties. This user should appear on your LaunchDarkly users dashboard
+        // soon after you run the demo.
+
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        let nameValue = params.name.toLowerCase() || '';
+        console.log("Visitors First Name:", nameValue);
+        var user = {
+            name: 'Christopher Gustavson',
+            key: '6306731232',
+            firstName: nameValue
+        };
+
+        var flagDetails = {
+            key: 'photo-context',
+            clientId: '625dec7789306115ba1e6a8e'
+        }
+
+        var div = document.createElement('div');
+        div.id = 'ld_test';
+        div.innerHTML = '<p class="test-copy"></p>\
+                        <div class="test-img"><img src=""></div>';
+        document.body.appendChild(div);
+        // Create a new LDClient instance with your environment-specific SDK key
+        var ldclient = LDClient.initialize(flagDetails.clientId, user);
+
+        function render() {
+            var flagValue = ldclient.variation(flagDetails.key, false);
+            var copy = (flagValue ? 'Oh hey,' : 'Sorry, not looking for') + ' ' + user.firstName;
+            var img = (flagValue ? 'https://t3.ftcdn.net/jpg/03/14/10/26/360_F_314102633_ZDcyjOOkPwqPuucgbxF5h1e7GonSLR1k.jpg' : 'https://st2.depositphotos.com/3489481/8696/i/600/depositphotos_86967460-stock-photo-nervous-looking-woman-biting-her.jpg');
+            setTimeout(function() {
+                if (nameValue === '') {
+                    copy = "Sorry, I don't know your name.";
+                }
+                document.querySelector('#ld_test .test-copy').innerHTML = copy;
+                document.querySelector('#ld_test .test-copy').style.visibility = 'visible';
+            }, 500);
+            document.querySelector('#ld_test .test-img img').src = img;
+
+        }
+
+        ldclient.on('ready', render);
+        ldclient.on('change', render);
+    </script>
+</body>
+
+</html>
