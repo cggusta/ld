@@ -40,7 +40,7 @@
         const params = new Proxy(new URLSearchParams(window.location.search), {
             get: (searchParams, prop) => searchParams.get(prop),
         });
-        let nameValue = params.name.toLowerCase() || '';
+        let nameValue = params.name || '';
         console.log("Visitors First Name:", nameValue);
         var user = {
             name: 'Christopher Gustavson',
@@ -63,7 +63,7 @@
 
         function render() {
             var flagValue = ldclient.variation(flagDetails.key, false);
-            var copy = (flagValue ? 'Oh hey,' : 'Sorry, not looking for') + ' ' + user.firstName;
+            var copy = (flagValue ? 'Oh hey,' : 'Sorry, not looking for') + ' ' + user.firstName.to;
             var img = (flagValue ? 'https://t3.ftcdn.net/jpg/03/14/10/26/360_F_314102633_ZDcyjOOkPwqPuucgbxF5h1e7GonSLR1k.jpg' : 'https://st2.depositphotos.com/3489481/8696/i/600/depositphotos_86967460-stock-photo-nervous-looking-woman-biting-her.jpg');
             setTimeout(function() {
                 if (nameValue === '') {
